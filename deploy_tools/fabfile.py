@@ -24,7 +24,8 @@ def _create_directory_structure_if_necessary(site_folder):
 
 
 def _get_latest_source(source_folder):
-    if exists(os.path.join(source_folder + '.git')):
+    print 'exists: ', os.path.join(source_folder + '.git')
+    if exists(os.path.join(source_folder, '.git')):
         run('cd {:s} && git fetch'.format(source_folder))
     else:
         run('git clone {:s} {:s}'.format(REPO_URL, source_folder))
@@ -37,14 +38,14 @@ def _update_settings(source_folder, site_name):
     sed(settings_path, 'DEBUG = True', 'DEBUG = False')
     sed(settings_path,
         'ALLOWED_HOSTS =.+$',
-        'ALLOWED_HOSTS = [{:s}]'.format(site_name)
+        'ALLOWED_HOSTS = ["{:s}"]'.format(site_name)
     )
     secret_key_file = os.path.join(source_folder, 'superlists/secret_key.py')
     if not exists(secret_key_file):
         chars = string.letters + string.digits
         key = ''.join(random.SystemRandom().choice(chars) for _ in range(50))
         append(secret_key_file, "SECRET_KEY = '{:s}'".format(key))
-    append(settings_path, '\n from .secret_key import SECRET_KEY')
+    append(settings_path, '\nfrom .secret_key import SECRET_KEY')
 
 
 def _update_virtualenv(source_folder):
