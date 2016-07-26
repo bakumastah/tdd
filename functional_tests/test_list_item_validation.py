@@ -1,4 +1,5 @@
 from .base import FunctionalTest
+from time import sleep
 
 
 class ItemValidationTest(FunctionalTest):
@@ -59,5 +60,14 @@ class ItemValidationTest(FunctionalTest):
         self.get_item_input_box().send_keys('a')
 
         # She is pleased to see that the error message disappears
+        error = self.get_error_element()
+        self.assertFalse(error.is_displayed())
+
+        # She inputs an incorrect item again 
+        self.get_item_input_box().clear()
+        self.get_item_input_box().send_keys('\n')
+        # She clicks the input box to start typing again
+        self.get_item_input_box().click()
+        # She is pleased to see that the error message disappears as well
         error = self.get_error_element()
         self.assertFalse(error.is_displayed())

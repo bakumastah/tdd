@@ -7,13 +7,37 @@
 </head>
 <body>
     <div id="qunit"></div>
-    <div id="qunit-fixture"></div>
+    <div id="qunit-fixture">
+        <form>
+            <input id="test" name="text" />
+            <div class="has-error">Error text</div>
+        </form>
+    </div>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
     <script src="qunit.js"></script>
+    <script src="../list.js"></script>
     <script>
         /*global $, Qunit */
-        QUnit.test('smoke test', function(assert) {
-            assert.equal(1, 1, 'Math works!');
+
+        QUnit.module('tests', {
+            beforeEach: function() {
+                $('input#test').on('keypress click', function() {
+                    $('.has-error').hide();
+                })
+            }
         });
+        QUnit.test('errors should be hidden on keypress', function(assert) {
+            var e = $.Event("keypress", { which: 65, keyCode: 65 });
+            $('input#test').trigger(e);
+            assert.equal($('.has-error').is(':visible'), false);
+        });
+        QUnit.test('errors should be hidden on click', function(assert) {
+            $('input#test').trigger('click');
+            assert.equal($('.has-error').is(':visible'), false);
+        });
+        QUnit.test('errors should not be hidden unless there is a keypress', function(assert) {
+            assert.equal($('.has-error').is(':visible'), true);
+        })
     </script>
 </body>
 </html>
