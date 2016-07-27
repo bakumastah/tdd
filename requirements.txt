@@ -1,2 +1,4 @@
 Django==1.8.4
 gunicorn==19.6.0
+[01;31m[Kmock[m[K==2.0.0
+[01;31m[Krequests[m[K==2.10.0
