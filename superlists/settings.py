@@ -25,7 +25,9 @@ SECRET_KEY = 'n#(pe3*7cy=r0g%k53wgp^=myta8km4pk)r==3*+52(=!7geu9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+DOMAIN = 'localhost'
+
+ALLOWED_HOSTS = [DOMAIN]
 
 
 # Application definition
