@@ -1,3 +1,4 @@
+import time
 from django.conf import settings
 from unittest import skip
 
@@ -22,7 +23,7 @@ class MyListTest(FunctionalTest):
             path='/'
         ))
 
-    @skip('Skipping test with Persona login')
+    # @skip('Skipping test with Persona login')
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
         # Edith is a logged-in user
         self.create_pre_authenticated_session('edith@example.com')
@@ -52,9 +53,9 @@ class MyListTest(FunctionalTest):
         self.assertEqual(self.browser.current_url, second_list_url)
 
         # She logs out. The "My lists" option disappears
-        self.browser.find_element_by_id('id_logout').click()
+        with self.wait_for_page_load():
+            self.browser.find_element_by_id('id_logout').click()
         self.assertEqual(
             self.browser.find_elements_by_link_text('My lists'),
             []
         )
-
