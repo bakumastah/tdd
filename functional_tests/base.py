@@ -33,7 +33,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             reset_database(self.server_host)
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
-        self.browser.set_page_load_timeout(30)
+        self.browser.set_page_load_timeout(60)
         self.browser.find_element_by_tag_name('body').send_keys(Keys.F12)
 
     def tearDown(self):
