@@ -40,7 +40,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.quit()
 
     @contextmanager
-    def wait_for_page_load(self, timeout=30):
+    def wait_for_page_load(self, timeout=60):
         old_page = self.browser.find_element_by_tag_name('html')
         yield
         WebDriverWait(self.browser, timeout).until(
