@@ -1,4 +1,6 @@
 import sys
+import os
+from datetime import datetime
 from contextlib import contextmanager
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -7,6 +9,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 from .server_tools import reset_database
+
+
+SCREEN_DUMP_LOCATION = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'screendumps'
+)
 
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -35,7 +42,40 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.implicitly_wait(10)
 
     def tearDown(self):
+        if self._test_has_failed():
+            if not os.path.exists(SCREEN_DUMP_LOCATION):
+                os.makedirs(SCREEN_DUMP_LOCATION)
+            for ix, handle in enumerate(self.browser.window_handles):
+                self._windowid = ix
+                self.browser.switch_to_window(handle)
+                self.take_screenshot()
+                self.dump_html()
         self.browser.quit()
+        super(FunctionalTest, self).tearDown()
+
+    def _test_has_failed(self):
+        return self._resultForDoCleanups.wasSuccessful
+
+    def _get_filename(self):
+        timestamp = datetime.now().isoformat().replace(':', '.')[:19]
+        return '{folder}/{classname}.{method}-window{windowid}-{timestamp}'.format(
+            folder=SCREEN_DUMP_LOCATION,
+            classname=self.__class__.__name__,
+            method=self._testMethodName,
+            windowid=self._windowid,
+            timestamp=timestamp
+        )
+
+    def take_screenshot(self):
+        filename = self._get_filename() + '.png'
+        print 'screenshotting to', filename
+        self.browser.get_screenshot_as_file(filename)
+
+    def dump_html(self):
+        filename = self._get_filename() + '.html'
+        print 'dumping page HTML to', filename
+        with open(filename, 'w') as f:
+            f.write(self.browser.page_source)
 
     @contextmanager
     def wait_for_page_load(self, timeout=60):

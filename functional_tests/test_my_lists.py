@@ -26,6 +26,7 @@ class MyListTest(FunctionalTest):
     # @skip('Skipping test with Persona login')
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
         # Edith is a logged-in user
+        self.fail()
         self.create_pre_authenticated_session('edith@example.com')
 
         # She goes to the homepage and starts a list
