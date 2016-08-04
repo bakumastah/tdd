@@ -54,7 +54,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         super(FunctionalTest, self).tearDown()
 
     def _test_has_failed(self):
-        return not self._resultForDoCleanups.wasSuccessful
+        return not self._resultForDoCleanups.wasSuccessful()
 
     def _get_filename(self):
         timestamp = datetime.now().isoformat().replace(':', '.')[:19]
