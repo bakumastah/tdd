@@ -6,7 +6,7 @@ from django.utils.html import escape
 from django.contrib.auth import get_user_model
 
 from lists.models import Item, List
-from lists.views import new_list
+from lists.views import new_list, share_list
 from lists.forms import ItemForm, ExistingListItemForm, EMPTY_ITEM_ERROR, DUPLICATE_ITEM_ERROR
 
 
@@ -210,3 +210,22 @@ class MyListsTest(TestCase):
         correct_user = User.objects.create(email='a@b.com')
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)
+
+
+class ShareListTest(TestCase):
+
+    def test_post_redirects_to_list_page(self):
+        user = User.objects.create()
+        list_ = List.objects.create()
+
+        response = self.client.post('/lists/{:d}/share'.format(list_.id), data={'email': user.email})
+
+        self.assertRedirects(response, '/lists/{:d}/'.format(list_.id))
+
+    def test_adds_user_to_lists_shared_with(self):
+        list_ = List.objects.create()
+        user = User.objects.create(email='share@email.com')
+
+        self.client.post('/lists/{:d}/share'.format(list_.id), data={'email': user.email})
+
+        self.assertIn(user, list_.shared_with.all())
