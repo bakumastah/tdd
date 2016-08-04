@@ -19,13 +19,6 @@
     <script>
         /*global $, Qunit */
 
-        QUnit.module('tests', {
-            beforeEach: function() {
-                $('input#test').on('keypress click', function() {
-                    $('.has-error').hide();
-                })
-            }
-        });
         QUnit.test('errors should be hidden on keypress', function(assert) {
             var e = $.Event("keypress", { which: 65, keyCode: 65 });
             $('input#test').trigger(e);
