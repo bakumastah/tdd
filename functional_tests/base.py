@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+import time
 from datetime import datetime
 from contextlib import contextmanager
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -7,6 +8,7 @@ from django.conf import settings
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.common.exceptions import WebDriverException
 
 from .server_tools import create_session_on_server
 from .management.commands.create_session import create_pre_authenticated_session
@@ -17,6 +19,8 @@ from .server_tools import reset_database
 SCREEN_DUMP_LOCATION = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'screendumps'
 )
+
+DEFAULT_WAIT = 5
 
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -95,12 +99,22 @@ class FunctionalTest(StaticLiveServerTestCase):
             f.write(self.browser.page_source)
 
     @contextmanager
-    def wait_for_page_load(self, timeout=60):
+    def wait_for_page_load(self, timeout=DEFAULT_WAIT):
         old_page = self.browser.find_element_by_tag_name('html')
         yield
         WebDriverWait(self.browser, timeout).until(
             staleness_of(old_page)
         )
+
+    def wait_for(self, function_with_assertion, timeout=DEFAULT_WAIT):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                return function_with_assertion()
+            except (AssertionError, WebDriverException):
+                time.sleep(0.1)
+        # one more try, which will raise any errors if they are outstanding
+        return function_with_assertion()
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
