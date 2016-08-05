@@ -20,9 +20,10 @@ class SharingTest(FunctionalTest):
 
         # Her friend Oniciferous is also hanging out on the lists site
         oni_browser = webdriver.Chrome()
+        oni_browser.implicitly_wait(10)
         self.addCleanup(lambda: quit_if_possible(oni_browser))
         self.browser = oni_browser
-        self.create_pre_authenticated_session('onicifeours@example.com')
+        self.create_pre_authenticated_session('oniciferous@example.com')
 
         # Edith goes to the home page and starts a list
         self.browser = edith_browser

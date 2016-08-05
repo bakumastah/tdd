@@ -14,8 +14,8 @@ class MyListTest(FunctionalTest):
         self.get_item_input_box().send_keys('Immanentize eschaton\n')
         first_list_url = self.browser.current_url
 
-        # She notices a "My lists" link for the first time
-        self.browser.find_element_by_link_text('My lists').click()
+        # She notices a "My Lists" link for the first time
+        self.browser.find_element_by_link_text('My Lists').click()
 
         # She sees that her list is in there, names according to its
         # first list item
@@ -27,15 +27,15 @@ class MyListTest(FunctionalTest):
         self.get_item_input_box().send_keys('Click cows\n')
         second_list_url = self.browser.current_url
 
-        # Under "My lists" her new list appears
-        self.browser.find_element_by_link_text('My lists').click()
+        # Under "My Lists" her new list appears
+        self.browser.find_element_by_link_text('My Lists').click()
         self.browser.find_element_by_link_text('Click cows').click()
         self.assertEqual(self.browser.current_url, second_list_url)
 
-        # She logs out. The "My lists" option disappears
+        # She logs out. The "My Lists" option disappears
         with self.wait_for_page_load():
             self.browser.find_element_by_id('id_logout').click()
         self.assertEqual(
-            self.browser.find_elements_by_link_text('My lists'),
+            self.browser.find_elements_by_link_text('My Lists'),
             []
         )
